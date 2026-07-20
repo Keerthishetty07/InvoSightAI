@@ -1,0 +1,11 @@
+.dashboard-container{
+    display:flex;
+}
+
+.dashboard-content{
+    margin-left:260px;
+    width:100%;
+    padding:40px;
+    background:#F8FAFC;
+    min-height:100vh;
+}
