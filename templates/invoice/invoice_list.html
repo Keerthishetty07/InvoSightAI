@@ -20,43 +20,52 @@
                     <th>Total</th>
                     <th>Status</th>
                     <th>Uploaded</th>
+                    <th>Action</th>
                 </tr>
 
             </thead>
 
+            
             <tbody>
 
-            {% for invoice in invoices %}
+{% for invoice in invoices %}
 
-                <tr>
+<tr>
 
-                    <td>{{ invoice.invoice_number|default:"-" }}</td>
+    <td>{{ invoice.invoice_number|default:"-" }}</td>
 
-                    <td>{{ invoice.vendor|default:"-" }}</td>
+    <td>{{ invoice.vendor|default:"-" }}</td>
 
-                    <td>₹ {{ invoice.total }}</td>
+    <td>₹ {{ invoice.total }}</td>
 
-                    <td>{{ invoice.status }}</td>
+    <td>{{ invoice.status }}</td>
 
-                    <td>{{ invoice.created_at|date:"d M Y" }}</td>
+    <td>{{ invoice.created_at|date:"d M Y" }}</td>
 
-                </tr>
+    <td>
+        <a href="{% url 'invoice_detail' invoice.id %}"
+           class="btn btn-primary btn-sm">
+            View
+        </a>
+    </td>
 
-            {% empty %}
+</tr>
 
-                <tr>
+{% empty %}
 
-                    <td colspan="5" class="text-center">
+<tr>
 
-                        No invoices uploaded yet.
+    <td colspan="6" class="text-center">
 
-                    </td>
+        No invoices uploaded yet.
 
-                </tr>
+    </td>
 
-            {% endfor %}
+</tr>
 
-            </tbody>
+{% endfor %}
+
+</tbody>
 
         </table>
 

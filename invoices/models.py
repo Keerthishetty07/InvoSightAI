@@ -19,14 +19,24 @@ class Invoice(models.Model):
         max_length=100,
         blank=True
     )
+    
+    customer = models.CharField(
+        max_length=255,
+        blank=True
+    )
 
     vendor = models.CharField(
         max_length=255,
         blank=True
     )
 
-    gst_number = models.CharField(
-        max_length=100,
+    vendor_gstin = models.CharField(
+        max_length=15,
+        blank=True
+    )
+
+    customer_gstin = models.CharField(
+        max_length=15,
         blank=True
     )
 
@@ -72,7 +82,9 @@ class Invoice(models.Model):
         choices=STATUS_CHOICES,
         default="Pending"
     )
-
+    ocr_text = models.TextField(
+        blank=True
+    )
     created_at = models.DateTimeField(
         auto_now_add=True
     )

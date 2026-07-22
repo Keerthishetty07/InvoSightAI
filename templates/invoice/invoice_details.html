@@ -1,0 +1,93 @@
+{% extends 'dashboard/base_dashboard.html' %}
+
+{% block title %}Invoice Details{% endblock %}
+
+{% block dashboard_content %}
+
+<h2 class="mb-4">Invoice Details</h2>
+
+<div class="card shadow-sm">
+
+    <div class="card-body">
+
+        <table class="table">
+
+            <tr>
+                <th>Invoice Number</th>
+                <td>{{ invoice.invoice_number }}</td>
+            </tr>
+
+            <tr>
+                <th>Vendor</th>
+                <td>{{ invoice.vendor }}</td>
+            </tr>
+
+            <tr>
+                <th>Customer</th>
+                <td>{{ invoice.customer }}</td>
+            </tr>
+
+            <tr>
+                <th>Vendor GSTIN</th>
+                <td>{{ invoice.vendor_gstin }}</td>
+            </tr>
+
+            <tr>
+                <th>Customer GSTIN</th>
+                <td>{{ invoice.customer_gstin }}</td>
+            </tr>
+
+            <tr>
+                <th>Invoice Date</th>
+                <td>{{ invoice.invoice_date }}</td>
+            </tr>
+
+            <tr>
+                <th>Subtotal</th>
+                <td>₹ {{ invoice.subtotal }}</td>
+            </tr>
+
+            <tr>
+                <th>Tax</th>
+                <td>₹ {{ invoice.tax }}</td>
+            </tr>
+
+            <tr>
+                <th>Total</th>
+                <td><strong>₹ {{ invoice.total }}</strong></td>
+            </tr>
+
+            <tr>
+                <th>Status</th>
+                <td>{{ invoice.status }}</td>
+            </tr>
+
+        </table>
+        <a href="{% url 'edit_invoice' invoice.id %}"
+class="btn btn-warning">
+
+Edit Invoice
+
+</a>
+
+    </div>
+
+</div>
+
+<br>
+
+<div class="card shadow-sm">
+
+    <div class="card-header">
+        <strong>OCR Extracted Text</strong>
+    </div>
+
+    <div class="card-body">
+
+        <pre style="white-space: pre-wrap;">{{ invoice.ocr_text }}</pre>
+
+    </div>
+
+</div>
+
+{% endblock %}
