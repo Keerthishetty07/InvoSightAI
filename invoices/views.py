@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import InvoiceUploadForm
 from .models import Invoice
 from .services import process_invoice
+from django.contrib import messages
 
 from .edit_forms import InvoiceEditForm
 @login_required(login_url="login")
@@ -89,6 +90,14 @@ def edit_invoice(request, invoice_id):
             print("Invoice saved")
 
             process_invoice(invoice)
+            
+
+            messages.success(
+                request,
+                "Invoice uploaded and processed successfully."
+            )
+
+            
 
             print("Processing finished")
 

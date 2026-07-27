@@ -1,54 +1,171 @@
-{% extends 'dashboard/base_dashboard.html' %}
+{% extends "dashboard/base_dashboard.html" %}
 
-{% block title %}
-Dashboard
-{% endblock %}
+{% block title %}Dashboard{% endblock %}
 
 {% block dashboard_content %}
 
-<h2 class="mb-4">Welcome back, {{ user.username }} 👋</h2>
-
-<p class="text-muted mb-4">
-    Here's an overview of your invoice management system.
-</p>
+<h2 class="mb-4">Dashboard</h2>
 
 <div class="row">
 
     <div class="col-md-3 mb-4">
-        <div class="stat-card">
-            <h6>Total Invoices</h6>
-            <h2>120</h2>
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h6>Total Invoices</h6>
+                <h2>{{ total_invoices }}</h2>
+            </div>
         </div>
     </div>
 
     <div class="col-md-3 mb-4">
-        <div class="stat-card">
-            <h6>Total Amount</h6>
-            <h2>₹45,250</h2>
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h6>Total Amount</h6>
+                <h2>₹ {{ total_amount }}</h2>
+            </div>
         </div>
     </div>
 
-    <div class="col-md-3 mb-4">
-        <div class="stat-card">
-            <h6>Vendors</h6>
-            <h2>18</h2>
+    <div class="col-md-2 mb-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-body text-center">
+                <h6>Processed</h6>
+                <h3>{{ processed }}</h3>
+            </div>
         </div>
     </div>
 
-    <div class="col-md-3 mb-4">
-        <div class="stat-card">
-            <h6>Success Rate</h6>
-            <h2>98%</h2>
+    <div class="col-md-2 mb-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-body text-center">
+                <h6>Pending</h6>
+                <h3>{{ pending }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-2 mb-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-body text-center">
+                <h6>Failed</h6>
+                <h3>{{ failed }}</h3>
+            </div>
         </div>
     </div>
 
 </div>
 
-<div class="stat-card mt-4">
-    <h4>Recent Activity</h4>
-    <p class="text-muted">
-        No invoices uploaded yet.
-    </p>
+<!-- Monthly Expenses Chart -->
+
+<div class="card shadow-sm mb-4">
+
+    <div class="card-header">
+        <h5 class="mb-0">Monthly Expenses</h5>
+    </div>
+
+    <div class="card-body">
+        <canvas id="expenseChart"></canvas>
+    </div>
+
 </div>
+
+<!-- Recent Invoices -->
+
+<div class="card shadow-sm">
+
+    <div class="card-header">
+        <h5 class="mb-0">Recent Invoices</h5>
+    </div>
+
+    <div class="card-body">
+
+        <table class="table table-hover">
+
+            <thead>
+                <tr>
+                    <th>Invoice No</th>
+                    <th>Vendor</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+            {% for invoice in recent_invoices %}
+
+                <tr>
+                    <td>{{ invoice.invoice_number }}</td>
+                    <td>{{ invoice.vendor }}</td>
+                    <td>₹ {{ invoice.total }}</td>
+                    <td>{{ invoice.status }}</td>
+                    <td>{{ invoice.created_at|date:"d M Y" }}</td>
+                </tr>
+
+            {% empty %}
+
+                <tr>
+                    <td colspan="5" class="text-center">
+                        No invoices uploaded yet.
+                    </td>
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<p>Months: {{ months }}</p>
+<p>Totals: {{ monthly_totals }}</p>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+const months = JSON.parse('{{ months|escapejs }}');
+const totals = JSON.parse('{{ monthly_totals|escapejs }}');
+
+const ctx = document.getElementById("expenseChart");
+
+new Chart(ctx, {
+
+    type: "bar",
+
+    data: {
+
+        labels: months,
+
+        datasets: [{
+
+            label: "Monthly Expenses",
+
+            data: totals,
+
+            borderWidth: 1
+
+        }]
+
+    },
+
+    options: {
+
+        responsive: true,
+
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+
+    }
+
+});
+
+</script>
 
 {% endblock %}
