@@ -68,6 +68,17 @@
     </div>
 
 </div>
+<div class="card shadow-sm mt-4">
+
+    <div class="card-header">
+        <h5 class="mb-0">Invoice Status</h5>
+    </div>
+
+    <div class="card-body">
+        <canvas id="statusChart"></canvas>
+    </div>
+
+</div>
 
 <!-- Recent Invoices -->
 
@@ -164,6 +175,24 @@ new Chart(ctx, {
 
     }
 
+});
+
+</script>
+<script>
+
+const statusLabels = JSON.parse('{{ status_labels|escapejs }}');
+const statusValues = JSON.parse('{{ status_values|escapejs }}');
+
+const statusCtx = document.getElementById("statusChart");
+
+new Chart(statusCtx, {
+    type: "pie",
+    data: {
+        labels: statusLabels,
+        datasets: [{
+            data: statusValues
+        }]
+    }
 });
 
 </script>

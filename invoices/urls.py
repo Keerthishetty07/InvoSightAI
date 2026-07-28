@@ -10,4 +10,14 @@ urlpatterns = [
     views.edit_invoice,
     name="edit_invoice"
 ),
+path(
+    "export/csv/",
+    views.export_csv,
+    name="export_csv",
+),
+path(
+    "<int:invoice_id>/delete/",
+    views.delete_invoice,
+    name="delete_invoice",
+),
 ]

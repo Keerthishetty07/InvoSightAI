@@ -70,6 +70,14 @@ Edit Invoice
 
 </a>
 
+<a href="{% url 'delete_invoice' invoice.id %}"
+class="btn btn-danger"
+onclick="return confirm('Delete invoice?')">
+
+Delete
+
+</a>
+
     </div>
 
 </div>

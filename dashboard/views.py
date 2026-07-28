@@ -53,6 +53,17 @@ def dashboard(request):
             float(item["total"])
             for item in monthly_expenses
         ]),
+        "status_labels": json.dumps([
+            "Processed",
+            "Pending",
+            "Failed"
+        ]),
+
+        "status_values": json.dumps([
+            processed,
+            pending,
+            failed
+        ]),
     }
 
     return render(

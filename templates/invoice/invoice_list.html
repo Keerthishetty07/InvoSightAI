@@ -5,6 +5,16 @@
 {% block dashboard_content %}
 
 <h2 class="mb-4">Invoice History</h2>
+<form method="GET" class="mb-3">
+
+    <input
+        type="text"
+        name="q"
+        placeholder="Search vendor or invoice"
+        class="form-control"
+        value="{{ request.GET.q }}">
+
+</form>
 {% if messages %}
     {% for message in messages %}
         <div class="alert alert-success">
