@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: invosight-ai
+    env: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn InvoSightAI.wsgi:application"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.4
+      - key: DEBUG
+        value: False
