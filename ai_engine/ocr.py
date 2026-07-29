@@ -1,6 +1,7 @@
 import requests
 
-OCR_API_KEY = "YOUR_KEY_WILL_GO_HERE_AS_ENV_VARIABLE"  # we'll fix this in Step 4
+import os
+OCR_API_KEY = os.environ.get("OCR_API_KEY")  # we'll fix this in Step 4
 OCR_API_URL = "https://api.ocr.space/parse/image"
 
 def extract_text(file_path):
