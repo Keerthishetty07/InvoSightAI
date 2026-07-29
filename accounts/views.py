@@ -21,25 +21,21 @@ def register_view(request):
 
 
 def login_view(request):
-
+    error = None
     if request.method == "POST":
-
         username = request.POST.get("username")
         password = request.POST.get("password")
 
-        user = authenticate(
-            request,
-            username=username,
-            password=password
-        )
+        user = authenticate(request, username=username, password=password)
 
         if user is not None:
-
             login(request, user)
-
             return redirect("dashboard")
+        else:
+            error = "Invalid username or password"
+            print(f"DEBUG: auth failed for username={username!r}")  # check Render logs
 
-    return render(request, "accounts/login.html")
+    return render(request, "accounts/login.html", {"error": error})
 
 
 def logout_view(request):

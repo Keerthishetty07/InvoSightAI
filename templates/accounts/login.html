@@ -15,6 +15,11 @@
         <form method="POST">
 
             {% csrf_token %}
+            {% if form.errors %}
+            <div class="alert alert-danger">
+                {{ form.non_field_errors }}
+            </div>
+            {% endif %}
 
             <div class="mb-3">
 
@@ -27,6 +32,8 @@
                     name="username"
                     class="form-control"
                     required>
+
+                <input type="hidden" name="next" value="{{ request.GET.next }}">
 
             </div>
 
