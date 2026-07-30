@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from django.db.models import Sum
+from django.db.models import Sum, Avg
 from django.db.models.functions import TruncMonth
 import json
 from invoices.models import Invoice
@@ -23,9 +23,10 @@ def dashboard(request):
 
     failed = invoices.filter(status="Failed").count()
 
-    total_amount = invoices.aggregate(
-        Sum("total")
-    )["total__sum"] or 0
+    aggregates = invoices.aggregate(total_amount=Sum("total"), average_amount=Avg("total"))
+    total_amount = aggregates["total_amount"] or 0
+    average_amount = aggregates["average_amount"] or 0
+    processed_rate = round((processed / total_invoices) * 100) if total_invoices else 0
 
     recent_invoices = invoices.order_by("-created_at")[:5]
     monthly_expenses = (
@@ -41,6 +42,8 @@ def dashboard(request):
         "pending": pending,
         "failed": failed,
         "total_amount": total_amount,
+        "average_amount": average_amount,
+        "processed_rate": processed_rate,
         "recent_invoices": recent_invoices,
 
         "months": json.dumps([

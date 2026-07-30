@@ -5,7 +5,10 @@ from .models import Invoice
 from .services import process_invoice
 from django.contrib import messages
 import csv
-from django.http import HttpResponse
+from django.http import HttpResponse, FileResponse, Http404
+from pathlib import Path
+import mimetypes
+from django.conf import settings
 
 from .edit_forms import InvoiceEditForm
 @login_required(login_url="login")
@@ -74,7 +77,8 @@ def invoice_detail(request, invoice_id):
         request,
         "invoice/invoice_details.html",
         {
-            "invoice": invoice
+            "invoice": invoice,
+            "invoice_media_url": f"/invoices/{invoice.id}/file/",
         }
     )
 @login_required(login_url="login")
@@ -162,6 +166,35 @@ def export_csv(request):
             invoice.status
         ])
 
+    return response
+
+
+@login_required(login_url="login")
+def serve_invoice_file(request, invoice_id):
+    invoice = get_object_or_404(
+        Invoice,
+        id=invoice_id,
+        user=request.user,
+    )
+
+    file_path = Path(invoice.uploaded_file.path)
+    media_root = Path(settings.MEDIA_ROOT).resolve()
+
+    try:
+        file_path.resolve().relative_to(media_root)
+    except ValueError:
+        raise Http404("Invalid file path")
+
+    if not file_path.exists() or not file_path.is_file():
+        raise Http404("Invoice file not found")
+
+    content_type = mimetypes.guess_type(file_path.name)[0] or "application/octet-stream"
+    response = FileResponse(
+        open(file_path, "rb"),
+        as_attachment=False,
+        filename=file_path.name,
+        content_type=content_type,
+    )
     return response
 
 @login_required

@@ -1,34 +1,66 @@
 {% extends 'base.html' %}
-
-{% block title %}
-InvoSight AI
-{% endblock %}
-
+{% block title %}InvoSight AI — Invoice Intelligence{% endblock %}
 {% block content %}
+<section class="landing-hero">
+    <div class="hero-shell">
+        <div class="hero-copy">
+            <div class="eyebrow"><span class="eyebrow-dot"></span> AI-powered invoice intelligence</div>
+            <h1>Turn financial documents into <span>usable data.</span></h1>
+            <p>Upload an invoice, let OCR extract the important fields, and manage the results in one clean workspace.</p>
+            <div class="hero-actions">
+                {% if user.is_authenticated %}
+                <a href="{% url 'upload_invoice' %}" class="btn btn-dark btn-lg rounded-pill px-4">Upload an invoice <i class="bi bi-arrow-up-right ms-2"></i></a>
+                <a href="{% url 'dashboard' %}" class="btn btn-light border btn-lg rounded-pill px-4">Open dashboard</a>
+                {% else %}
+                <a href="{% url 'register' %}" class="btn btn-dark btn-lg rounded-pill px-4">Start processing <i class="bi bi-arrow-up-right ms-2"></i></a>
+                <a href="{% url 'login' %}" class="btn btn-light border btn-lg rounded-pill px-4">Log in</a>
+                {% endif %}
+            </div>
+            <div class="hero-proof">
+                <span><i class="bi bi-check-circle-fill"></i> OCR extraction</span>
+                <span><i class="bi bi-check-circle-fill"></i> Invoice history</span>
+                <span><i class="bi bi-check-circle-fill"></i> CSV export</span>
+            </div>
+        </div>
 
-<section class="hero">
-
-    <div class="hero-content">
-
-        <h1>
-            Paperwork In.
-            <br>
-            <span>Structured Data Out.</span>
-        </h1>
-
-        <p>
-            Upload invoices and bank statements,
-            extract key information using AI,
-            visualize insights,
-            and export reports effortlessly.
-        </p>
-
-        <a href="#" class="hero-btn">
-            Get Started
-        </a>
-
+        <div class="hero-product">
+            <div class="hero-window">
+                <div class="hero-window-top">
+                    <span class="window-dot"></span><span class="window-dot"></span><span class="window-dot"></span>
+                    <span class="window-title">Invoice overview</span>
+                </div>
+                <div class="mini-kpis">
+                    <div><span>Total invoices</span><strong>128</strong><small>+12 this month</small></div>
+                    <div><span>Processed value</span><strong>₹8.42L</strong><small>Across all invoices</small></div>
+                </div>
+                <div class="mini-panel">
+                    <div class="mini-panel-head"><strong>Recent extraction</strong><span class="status-badge status-processed">Processed</span></div>
+                    <div class="mini-doc-row">
+                        <div class="doc-icon"><i class="bi bi-file-earmark-text-fill"></i></div>
+                        <div><strong>INV-2026-041</strong><span>Vendor • 30 Jul 2026</span></div>
+                        <strong class="mini-total">₹24,780</strong>
+                    </div>
+                    <div class="mini-fields">
+                        <div><span>GSTIN</span><strong>29ABCDE1234F1Z5</strong></div>
+                        <div><span>Tax</span><strong>₹3,780</strong></div>
+                        <div><span>Currency</span><strong>INR</strong></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-
 </section>
 
+<section class="landing-section">
+    <div class="section-heading">
+        <div class="eyebrow">Built for the workflow</div>
+        <h2>From upload to insight in one place.</h2>
+        <p>Keep the experience simple for the user and useful for the next step in your analysis.</p>
+    </div>
+    <div class="feature-grid">
+        <article class="feature-card"><div class="feature-icon"><i class="bi bi-file-earmark-richtext"></i></div><h3>Smart extraction</h3><p>Capture invoice number, vendor, GSTIN, dates, tax and totals from uploaded files.</p></article>
+        <article class="feature-card"><div class="feature-icon"><i class="bi bi-bar-chart-line"></i></div><h3>Clear analytics</h3><p>See invoice volume, processed value, status mix and monthly spend at a glance.</p></article>
+        <article class="feature-card"><div class="feature-icon"><i class="bi bi-database-check"></i></div><h3>Easy to manage</h3><p>Search your history, review extracted details, edit records and export CSV data.</p></article>
+    </div>
+</section>
 {% endblock %}

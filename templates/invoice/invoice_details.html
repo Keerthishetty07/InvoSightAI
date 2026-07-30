@@ -1,101 +1,51 @@
 {% extends 'dashboard/base_dashboard.html' %}
-
-{% block title %}Invoice Details{% endblock %}
-
+{% block title %}{{ invoice.invoice_number|default:"Invoice" }} — InvoSight AI{% endblock %}
 {% block dashboard_content %}
-
-<h2 class="mb-4">Invoice Details</h2>
-
-<div class="card shadow-sm">
-
-    <div class="card-body">
-
-        <table class="table">
-
-            <tr>
-                <th>Invoice Number</th>
-                <td>{{ invoice.invoice_number }}</td>
-            </tr>
-
-            <tr>
-                <th>Vendor</th>
-                <td>{{ invoice.vendor }}</td>
-            </tr>
-
-            <tr>
-                <th>Customer</th>
-                <td>{{ invoice.customer }}</td>
-            </tr>
-
-            <tr>
-                <th>Vendor GSTIN</th>
-                <td>{{ invoice.vendor_gstin }}</td>
-            </tr>
-
-            <tr>
-                <th>Customer GSTIN</th>
-                <td>{{ invoice.customer_gstin }}</td>
-            </tr>
-
-            <tr>
-                <th>Invoice Date</th>
-                <td>{{ invoice.invoice_date }}</td>
-            </tr>
-
-            <tr>
-                <th>Subtotal</th>
-                <td>₹ {{ invoice.subtotal }}</td>
-            </tr>
-
-            <tr>
-                <th>Tax</th>
-                <td>₹ {{ invoice.tax }}</td>
-            </tr>
-
-            <tr>
-                <th>Total</th>
-                <td><strong>₹ {{ invoice.total }}</strong></td>
-            </tr>
-
-            <tr>
-                <th>Status</th>
-                <td>{{ invoice.status }}</td>
-            </tr>
-
-        </table>
-        <a href="{% url 'edit_invoice' invoice.id %}"
-class="btn btn-warning">
-
-Edit Invoice
-
-</a>
-
-<a href="{% url 'delete_invoice' invoice.id %}"
-class="btn btn-danger"
-onclick="return confirm('Delete invoice?')">
-
-Delete
-
-</a>
-
+<div class="page-heading-row">
+    <div>
+        <a class="back-link" href="{% url 'invoice_history' %}"><i class="bi bi-arrow-left"></i> Back to history</a>
+        <h1 class="mt-2">{{ invoice.invoice_number|default:"Invoice details" }}</h1>
+        <p>Review the extracted fields and compare them against the source document.</p>
     </div>
-
+    <div class="heading-actions"><a href="{% url 'edit_invoice' invoice.id %}" class="btn btn-light border rounded-pill px-3"><i class="bi bi-pencil me-2"></i>Edit</a><a href="{% url 'delete_invoice' invoice.id %}" class="btn btn-outline-danger rounded-pill px-3" onclick="return confirm('Delete this invoice?')"><i class="bi bi-trash me-2"></i>Delete</a></div>
 </div>
 
-<br>
+<div class="detail-grid">
+    <section class="surface-card document-preview-card">
+        <div class="surface-head"><div><h2>Source document</h2><p>Use the original file to verify extracted values.</p></div></div>
+        <div class="document-preview">
+            {% if invoice.uploaded_file.name|lower|slice:"-4:" == ".pdf" %}
+                <iframe src="{{ invoice_media_url }}" title="Invoice PDF preview"></iframe>
+            {% else %}
+                <img src="{{ invoice_media_url }}" alt="Uploaded invoice document">
+            {% endif %}
+        </div>
+    </section>
 
-<div class="card shadow-sm">
-
-    <div class="card-header">
-        <strong>OCR Extracted Text</strong>
-    </div>
-
-    <div class="card-body">
-
-        <pre style="white-space: pre-wrap;">{{ invoice.ocr_text }}</pre>
-
-    </div>
-
+    <section class="surface-card extraction-card">
+        <div class="surface-head"><div><h2>Extracted data</h2><p>Structured fields generated from OCR.</p></div><span class="status-badge status-{{ invoice.status|lower }}">{{ invoice.status }}</span></div>
+        <div class="quality-banner {% if invoice.status == 'Processed' %}quality-good{% else %}quality-warning{% endif %}">
+            <i class="bi {% if invoice.status == 'Processed' %}bi-check2-circle{% else %}bi-exclamation-circle{% endif %}"></i>
+            <div><strong>{% if invoice.status == 'Processed' %}Extraction completed{% else %}Review required{% endif %}</strong><span>Verify financial fields against the uploaded document.</span></div>
+        </div>
+        <div class="field-grid">
+            <div class="data-field"><span>Invoice number</span><strong>{{ invoice.invoice_number|default:"—" }}</strong></div>
+            <div class="data-field"><span>Invoice date</span><strong>{{ invoice.invoice_date|date:"d M Y"|default:"—" }}</strong></div>
+            <div class="data-field"><span>Vendor</span><strong>{{ invoice.vendor|default:"—" }}</strong></div>
+            <div class="data-field"><span>Customer</span><strong>{{ invoice.customer|default:"—" }}</strong></div>
+            <div class="data-field"><span>Vendor GSTIN</span><strong>{{ invoice.vendor_gstin|default:"—" }}</strong></div>
+            <div class="data-field"><span>Customer GSTIN</span><strong>{{ invoice.customer_gstin|default:"—" }}</strong></div>
+        </div>
+        <div class="amount-card">
+            <div><span>Subtotal</span><strong>₹{{ invoice.subtotal|floatformat:2 }}</strong></div>
+            <div><span>Tax</span><strong>₹{{ invoice.tax|floatformat:2 }}</strong></div>
+            <div class="amount-total"><span>Total amount</span><strong>₹{{ invoice.total|floatformat:2 }}</strong></div>
+        </div>
+    </section>
 </div>
 
+<section class="surface-card ocr-card">
+    <div class="surface-head"><div><h2>OCR text</h2><p>Raw text returned by the OCR service.</p></div></div>
+    <pre class="ocr-text">{{ invoice.ocr_text|default:"No OCR text available." }}</pre>
+</section>
 {% endblock %}

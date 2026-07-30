@@ -4,7 +4,7 @@
   <img src="https://img.shields.io/badge/Django-5.x-green?style=for-the-badge&logo=django">
   <img src="https://img.shields.io/badge/Python-3.11-blue?style=for-the-badge&logo=python">
   <img src="https://img.shields.io/badge/SQLite-Database-blue?style=for-the-badge&logo=sqlite">
-  <img src="https://img.shields.io/badge/EasyOCR-AI-orange?style=for-the-badge">
+  <img src="https://img.shields.io/badge/OCR.space API-AI-orange?style=for-the-badge">
   <img src="https://img.shields.io/badge/Chart.js-Analytics-red?style=for-the-badge">
 </p>
 
@@ -12,7 +12,7 @@
 
 # 📖 About the Project
 
-**InvoSight AI** is an AI-powered Invoice Management System developed using **Django** and **EasyOCR**.
+**InvoSight AI** is an AI-powered Invoice Management System developed using **Django** and **OCR.space API**.
 
 The application allows users to upload invoice images or PDF files, automatically extracts important invoice information using Optical Character Recognition (OCR), stores the extracted data securely, and provides an interactive dashboard to visualize financial insights.
 
@@ -85,7 +85,7 @@ The goal of this project is to simplify invoice processing by reducing manual da
 
 # 🧠 AI Features
 
-✔ OCR using EasyOCR
+✔ OCR using OCR.space API
 
 ✔ PDF Support
 
@@ -124,7 +124,7 @@ The goal of this project is to simplify invoice processing by reducing manual da
 
 ## AI & OCR
 
-- EasyOCR
+- OCR.space API
 - PyMuPDF (fitz)
 - pdf2image
 - Pillow

@@ -5,6 +5,7 @@ urlpatterns = [
     path("upload/", views.upload_invoice, name="upload_invoice"),
     path("history/", views.invoice_list, name="invoice_history"),
     path("<int:invoice_id>/",views.invoice_detail,name="invoice_detail"),
+    path("<int:invoice_id>/file/", views.serve_invoice_file, name="invoice_file"),
     path(
     "<int:invoice_id>/edit/",
     views.edit_invoice,

@@ -1,15 +1,1 @@
-.upload-box{
-    border:2px dashed #3B82F6;
-    border-radius:15px;
-    padding:50px;
-    text-align:center;
-    background:#F8FAFC;
-}
-
-.upload-box:hover{
-    background:#EFF6FF;
-}
-
-input[type=file]{
-    padding:12px;
-}
+/* upload styles live in cards.css; this file is kept for backwards-compatible template imports */

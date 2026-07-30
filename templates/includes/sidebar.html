@@ -1,69 +1,52 @@
-<div class="sidebar">
-
-    <div class="sidebar-logo">
-        <h3>Invo<span>Sight</span> AI</h3>
+<aside class="app-sidebar">
+    <div class="sidebar-brand">
+        <div class="brand-mark"><i class="bi bi-stars"></i></div>
+        <div>
+            <div class="sidebar-brand-title">InvoSight <strong>AI</strong></div>
+            <div class="sidebar-brand-sub">Document intelligence</div>
+        </div>
     </div>
 
-    <ul class="sidebar-menu">
-
-        <li>
-            <a href="{% url 'dashboard' %}">
-                <i class="bi bi-grid-fill"></i>
-                Dashboard
-            </a>
-        </li>
-
-        <li>
-            <a href="{% url 'upload_invoice' %}">
-                <i class="bi bi-upload"></i>
-                Upload Invoice
-            </a>
-        </li>
-
-        <li>
-            <a href="{% url 'invoice_history' %}">
-                <i class="bi bi-receipt"></i>
-                Invoice History
-            </a>
-        </li>
-
-        <li>
-            <a href="{% url 'upload_bank' %}">
-                <i class="bi bi-bank"></i>
-                Bank Statements
-            </a>
-        </li>
-
-        <li>
-            <a href="{% url 'dashboard' %}">
-                <i class="bi bi-bar-chart-fill"></i>
-                Analytics
-            </a>
-        </li>
-
-        <li>
-            <a href="{% url 'export_csv' %}">
-                <i class="bi bi-download"></i>
-                Export Data
-            </a>
-        </li>
-
-        <li>
-            <a href="{% url 'settings' %}">
-                <i class="bi bi-gear-fill"></i>
-                Settings
-            </a>
-        </li>
-
-    </ul>
-
-    <div class="logout-section">
-
-        <a href="{% url 'logout' %}" class="logout-btn">
-            <i class="bi bi-box-arrow-right"></i>
-            Logout
+    <div class="sidebar-label">WORKSPACE</div>
+    <nav class="sidebar-menu">
+        <a class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'dashboard' %}">
+            <i class="bi bi-grid-1x2-fill"></i><span>Dashboard</span>
         </a>
+        <a class="{% if request.resolver_match.url_name == 'upload_invoice' %}active{% endif %}" href="{% url 'upload_invoice' %}">
+            <i class="bi bi-cloud-arrow-up-fill"></i><span>Upload invoice</span>
+        </a>
+        <a class="{% if request.resolver_match.url_name == 'invoice_history' %}active{% endif %}" href="{% url 'invoice_history' %}">
+            <i class="bi bi-receipt-cutoff"></i><span>Invoice history</span>
+        </a>
+        <a href="{% url 'upload_bank' %}">
+            <i class="bi bi-bank2"></i><span>Bank statements</span>
+            <span class="sidebar-pill">Soon</span>
+        </a>
+        <a href="{% url 'dashboard' %}#analytics">
+            <i class="bi bi-graph-up-arrow"></i><span>Analytics</span>
+        </a>
+    </nav>
 
+    <div class="sidebar-label">TOOLS</div>
+    <nav class="sidebar-menu">
+        <a href="{% url 'export_csv' %}">
+            <i class="bi bi-download"></i><span>Export CSV</span>
+        </a>
+        <a class="{% if request.resolver_match.url_name == 'settings' %}active{% endif %}" href="{% url 'settings' %}">
+            <i class="bi bi-sliders2"></i><span>Settings</span>
+        </a>
+    </nav>
+
+    <div class="sidebar-footer">
+        <div class="security-note">
+            <i class="bi bi-shield-check"></i>
+            <div>
+                <strong>Private workspace</strong>
+                <span>Your invoices are scoped to your account.</span>
+            </div>
+        </div>
+        <a class="sidebar-logout" href="{% url 'logout' %}">
+            <i class="bi bi-box-arrow-left"></i> Log out
+        </a>
     </div>
-
-</div>
+</aside>

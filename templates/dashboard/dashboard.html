@@ -1,200 +1,106 @@
 {% extends "dashboard/base_dashboard.html" %}
-
-{% block title %}Dashboard{% endblock %}
-
+{% block title %}Dashboard — InvoSight AI{% endblock %}
 {% block dashboard_content %}
-
-<h2 class="mb-4">Dashboard</h2>
-
-<div class="row">
-
-    <div class="col-md-3 mb-4">
-        <div class="card shadow-sm border-0">
-            <div class="card-body">
-                <h6>Total Invoices</h6>
-                <h2>{{ total_invoices }}</h2>
-            </div>
-        </div>
+<div class="page-heading-row">
+    <div>
+        <div class="eyebrow">Overview</div>
+        <h1>Good to see you, {{ request.user.username|title }}.</h1>
+        <p>Track your invoice workflow and financial extraction activity.</p>
     </div>
-
-    <div class="col-md-3 mb-4">
-        <div class="card shadow-sm border-0">
-            <div class="card-body">
-                <h6>Total Amount</h6>
-                <h2>₹ {{ total_amount }}</h2>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-2 mb-4">
-        <div class="card shadow-sm border-0">
-            <div class="card-body text-center">
-                <h6>Processed</h6>
-                <h3>{{ processed }}</h3>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-2 mb-4">
-        <div class="card shadow-sm border-0">
-            <div class="card-body text-center">
-                <h6>Pending</h6>
-                <h3>{{ pending }}</h3>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-2 mb-4">
-        <div class="card shadow-sm border-0">
-            <div class="card-body text-center">
-                <h6>Failed</h6>
-                <h3>{{ failed }}</h3>
-            </div>
-        </div>
-    </div>
-
+    <a href="{% url 'upload_invoice' %}" class="btn btn-dark rounded-pill px-4"><i class="bi bi-plus-lg me-2"></i>Upload invoice</a>
 </div>
 
-<!-- Monthly Expenses Chart -->
-
-<div class="card shadow-sm mb-4">
-
-    <div class="card-header">
-        <h5 class="mb-0">Monthly Expenses</h5>
+<div class="kpi-grid">
+    <div class="kpi-card">
+        <div class="kpi-icon icon-blue"><i class="bi bi-receipt-cutoff"></i></div>
+        <div><span>Total invoices</span><strong>{{ total_invoices }}</strong><small>All uploaded documents</small></div>
     </div>
-
-    <div class="card-body">
-        <canvas id="expenseChart"></canvas>
+    <div class="kpi-card">
+        <div class="kpi-icon icon-green"><i class="bi bi-currency-rupee"></i></div>
+        <div><span>Total amount</span><strong>₹{{ total_amount|floatformat:0 }}</strong><small>Processed invoice value</small></div>
     </div>
-
-</div>
-<div class="card shadow-sm mt-4">
-
-    <div class="card-header">
-        <h5 class="mb-0">Invoice Status</h5>
+    <div class="kpi-card">
+        <div class="kpi-icon icon-violet"><i class="bi bi-calculator"></i></div>
+        <div><span>Average invoice</span><strong>₹{{ average_amount|floatformat:0 }}</strong><small>Across uploaded invoices</small></div>
     </div>
-
-    <div class="card-body">
-        <canvas id="statusChart"></canvas>
+    <div class="kpi-card">
+        <div class="kpi-icon icon-amber"><i class="bi bi-check2-circle"></i></div>
+        <div><span>Processed</span><strong>{{ processed_rate }}%</strong><small>{{ processed }} of {{ total_invoices }} invoices</small></div>
     </div>
-
 </div>
 
-<!-- Recent Invoices -->
+<div class="content-grid" id="analytics">
+    <section class="surface-card chart-card chart-wide">
+        <div class="surface-head">
+            <div><h2>Monthly spending</h2><p>Invoice totals by month.</p></div>
+            <span class="subtle-badge"><i class="bi bi-graph-up"></i> Trend</span>
+        </div>
+        <div class="chart-wrap"><canvas id="expenseChart"></canvas></div>
+    </section>
 
-<div class="card shadow-sm">
+    <section class="surface-card chart-card">
+        <div class="surface-head">
+            <div><h2>Processing status</h2><p>Current document mix.</p></div>
+        </div>
+        <div class="chart-wrap chart-donut"><canvas id="statusChart"></canvas></div>
+        <div class="status-legend">
+            <span><i class="legend-dot processed"></i>Processed <strong>{{ processed }}</strong></span>
+            <span><i class="legend-dot pending"></i>Pending <strong>{{ pending }}</strong></span>
+            <span><i class="legend-dot failed"></i>Failed <strong>{{ failed }}</strong></span>
+        </div>
+    </section>
+</div>
 
-    <div class="card-header">
-        <h5 class="mb-0">Recent Invoices</h5>
+<section class="surface-card recent-card">
+    <div class="surface-head">
+        <div><h2>Recent invoices</h2><p>Your latest uploaded documents.</p></div>
+        <a href="{% url 'invoice_history' %}" class="text-link">View all <i class="bi bi-arrow-right"></i></a>
     </div>
-
-    <div class="card-body">
-
-        <table class="table table-hover">
-
-            <thead>
-                <tr>
-                    <th>Invoice No</th>
-                    <th>Vendor</th>
-                    <th>Total</th>
-                    <th>Status</th>
-                    <th>Date</th>
-                </tr>
-            </thead>
-
+    <div class="table-responsive">
+        <table class="app-table">
+            <thead><tr><th>Invoice</th><th>Vendor</th><th>Amount</th><th>Status</th><th>Date</th><th></th></tr></thead>
             <tbody>
-
             {% for invoice in recent_invoices %}
-
-                <tr>
-                    <td>{{ invoice.invoice_number }}</td>
-                    <td>{{ invoice.vendor }}</td>
-                    <td>₹ {{ invoice.total }}</td>
-                    <td>{{ invoice.status }}</td>
-                    <td>{{ invoice.created_at|date:"d M Y" }}</td>
-                </tr>
-
+            <tr>
+                <td><strong>{{ invoice.invoice_number|default:"Unidentified" }}</strong></td>
+                <td>{{ invoice.vendor|default:"—" }}</td>
+                <td>₹{{ invoice.total|floatformat:2 }}</td>
+                <td><span class="status-badge status-{{ invoice.status|lower }}">{{ invoice.status }}</span></td>
+                <td>{{ invoice.created_at|date:"d M Y" }}</td>
+                <td><a class="table-action" href="{% url 'invoice_detail' invoice.id %}" aria-label="View invoice"><i class="bi bi-arrow-up-right"></i></a></td>
+            </tr>
             {% empty %}
-
-                <tr>
-                    <td colspan="5" class="text-center">
-                        No invoices uploaded yet.
-                    </td>
-                </tr>
-
+            <tr><td colspan="6"><div class="empty-state compact"><div class="empty-icon"><i class="bi bi-inbox"></i></div><strong>No invoices yet</strong><span>Upload your first invoice to start building your workspace.</span><a href="{% url 'upload_invoice' %}" class="btn btn-dark btn-sm rounded-pill px-3">Upload invoice</a></div></td></tr>
             {% endfor %}
-
             </tbody>
-
         </table>
-
     </div>
+</section>
 
-</div>
-
-<p>Months: {{ months }}</p>
-<p>Totals: {{ monthly_totals }}</p>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+{% endblock %}
+{% block js %}
 <script>
-
 const months = JSON.parse('{{ months|escapejs }}');
 const totals = JSON.parse('{{ monthly_totals|escapejs }}');
-
-const ctx = document.getElementById("expenseChart");
-
-new Chart(ctx, {
-
-    type: "bar",
-
-    data: {
-
-        labels: months,
-
-        datasets: [{
-
-            label: "Monthly Expenses",
-
-            data: totals,
-
-            borderWidth: 1
-
-        }]
-
-    },
-
-    options: {
-
-        responsive: true,
-
-        scales: {
-            y: {
-                beginAtZero: true
-            }
-        }
-
-    }
-
-});
-
-</script>
-<script>
-
 const statusLabels = JSON.parse('{{ status_labels|escapejs }}');
 const statusValues = JSON.parse('{{ status_values|escapejs }}');
 
+const expenseCtx = document.getElementById("expenseChart");
+if (expenseCtx) {
+    new Chart(expenseCtx, {
+        type: "bar",
+        data: { labels: months, datasets: [{ data: totals, borderRadius: 8, maxBarThickness: 44, backgroundColor: "#111827" }] },
+        options: { plugins: { legend: { display: false }, tooltip: { callbacks: { label: (ctx) => " ₹" + Number(ctx.raw || 0).toLocaleString("en-IN") } } }, scales: { x: { grid: { display: false } }, y: { beginAtZero: true, grid: { color: "rgba(17,24,39,.07)" }, ticks: { callback: (value) => "₹" + Number(value).toLocaleString("en-IN") } } } }
+    });
+}
 const statusCtx = document.getElementById("statusChart");
-
-new Chart(statusCtx, {
-    type: "pie",
-    data: {
-        labels: statusLabels,
-        datasets: [{
-            data: statusValues
-        }]
-    }
-});
-
+if (statusCtx) {
+    new Chart(statusCtx, {
+        type: "doughnut",
+        data: { labels: statusLabels, datasets: [{ data: statusValues, backgroundColor: ["#22c55e","#f59e0b","#ef4444"], borderWidth: 0, hoverOffset: 4 }] },
+        options: { cutout: "72%", plugins: { legend: { display: false } } }
+    });
+}
 </script>
-
 {% endblock %}

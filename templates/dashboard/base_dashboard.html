@@ -1,26 +1,23 @@
 {% extends 'base.html' %}
 {% load static %}
-
 {% block css %}
 <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
 <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
 <link rel="stylesheet" href="{% static 'css/cards.css' %}">
 <link rel="stylesheet" href="{% static 'css/upload.css' %}">
+<link rel="stylesheet" href="{% static 'css/responsive.css' %}">
 {% endblock %}
-
 {% block content %}
-
-<div class="dashboard-container">
-
+<div class="app-shell">
     {% include 'includes/sidebar.html' %}
-
-    <div class="dashboard-content">
-
-        {% block dashboard_content %}
-        {% endblock %}
-
-    </div>
-
+    <main class="dashboard-content">
+        <div class="mobile-appbar">
+            <a class="brand" href="{% url 'dashboard' %}">
+                <span class="brand-mark"><i class="bi bi-stars"></i></span>
+                <span>InvoSight <strong>AI</strong></span>
+            </a>
+        </div>
+        {% block dashboard_content %}{% endblock %}
+    </main>
 </div>
-
 {% endblock %}

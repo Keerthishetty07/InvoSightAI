@@ -1,42 +1,69 @@
 {% extends 'dashboard/base_dashboard.html' %}
 {% load static %}
-
-{% block title %}Upload Invoice{% endblock %}
-
+{% block title %}Upload Invoice — InvoSight AI{% endblock %}
 {% block dashboard_content %}
-
-<div class="container-fluid">
-
-    <h2 class="mb-4">Upload Invoice</h2>
-
-    <div class="card shadow-sm border-0">
-
-        <div class="card-body p-5">
-
-            <form method="POST" enctype="multipart/form-data">
-
-                {% csrf_token %}
-
-                <div class="mb-4">
-
-                    <label class="form-label fw-bold">
-                        Select Invoice (PDF / Image)
-                    </label>
-
-                    {{ form.uploaded_file }}
-
-                </div>
-
-                <button class="btn btn-primary">
-                    Upload Invoice
-                </button>
-
-            </form>
-
-        </div>
-
+<div class="page-heading-row">
+    <div>
+        <div class="eyebrow">Document intake</div>
+        <h1>Upload an invoice</h1>
+        <p>Drop a PDF or image and let the extraction pipeline handle the rest.</p>
     </div>
-
 </div>
 
+<div class="upload-layout">
+    <section class="surface-card upload-card">
+        <div class="upload-card-inner">
+            <div class="upload-illustration"><i class="bi bi-file-earmark-arrow-up"></i></div>
+            <h2>Drop your invoice here</h2>
+            <p>or choose a file from your device</p>
+            <form method="POST" enctype="multipart/form-data" id="invoiceUploadForm">
+                {% csrf_token %}
+                <label class="dropzone" for="{{ form.uploaded_file.id_for_label }}" id="dropzone">
+                    <span class="dropzone-icon"><i class="bi bi-cloud-arrow-up"></i></span>
+                    <strong>Browse files</strong>
+                    <span>PDF, JPG, JPEG or PNG</span>
+                    <small>Use a clear document for best OCR results</small>
+                    {{ form.uploaded_file }}
+                </label>
+                {% if form.uploaded_file.errors %}<div class="field-error">{{ form.uploaded_file.errors|striptags }}</div>{% endif %}
+                <div class="selected-file" id="selectedFile"><i class="bi bi-paperclip"></i><span>No file selected</span></div>
+                <button class="btn btn-dark btn-lg rounded-pill w-100" id="uploadButton" type="submit"><i class="bi bi-stars me-2"></i>Process with AI</button>
+            </form>
+        </div>
+    </section>
+
+    <aside class="upload-side">
+        <div class="surface-card guide-card">
+            <div class="guide-icon"><i class="bi bi-stars"></i></div>
+            <h3>What happens next?</h3>
+            <div class="process-step"><span>01</span><div><strong>Upload</strong><p>Your document is stored in your account workspace.</p></div></div>
+            <div class="process-step"><span>02</span><div><strong>OCR extraction</strong><p>Text is extracted from the uploaded file.</p></div></div>
+            <div class="process-step"><span>03</span><div><strong>Structured fields</strong><p>Key invoice values are parsed and saved for review.</p></div></div>
+        </div>
+        <div class="secure-card">
+            <i class="bi bi-shield-check"></i><div><strong>Review before relying on data</strong><span>OCR can miss or misread fields. Check important financial values against the source invoice.</span></div>
+        </div>
+    </aside>
+</div>
+{% endblock %}
+{% block js %}
+<script>
+const input = document.getElementById("id_uploaded_file");
+const dropzone = document.getElementById("dropzone");
+const selected = document.getElementById("selectedFile");
+const button = document.getElementById("uploadButton");
+function updateFileState(file) {
+    selected.querySelector("span").textContent = file ? file.name : "No file selected";
+    if (file) selected.classList.add("has-file"); else selected.classList.remove("has-file");
+}
+input?.addEventListener("change", () => updateFileState(input.files[0]));
+["dragenter","dragover"].forEach(evt => dropzone?.addEventListener(evt, e => { e.preventDefault(); dropzone.classList.add("is-dragging"); }));
+["dragleave","drop"].forEach(evt => dropzone?.addEventListener(evt, e => { e.preventDefault(); dropzone.classList.remove("is-dragging"); }));
+dropzone?.addEventListener("drop", e => { const files = e.dataTransfer.files; if (files.length) { input.files = files; updateFileState(files[0]); } });
+document.getElementById("invoiceUploadForm")?.addEventListener("submit", () => {
+    if (!input?.files.length) return;
+    button.disabled = true;
+    button.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing document…';
+});
+</script>
 {% endblock %}

@@ -1,93 +1,42 @@
 {% extends 'dashboard/base_dashboard.html' %}
-
-{% block title %}Invoice History{% endblock %}
-
+{% block title %}Invoice History — InvoSight AI{% endblock %}
 {% block dashboard_content %}
-
-<h2 class="mb-4">Invoice History</h2>
-<form method="GET" class="mb-3">
-
-    <input
-        type="text"
-        name="q"
-        placeholder="Search vendor or invoice"
-        class="form-control"
-        value="{{ request.GET.q }}">
-
-</form>
-{% if messages %}
-    {% for message in messages %}
-        <div class="alert alert-success">
-            {{ message }}
-        </div>
-    {% endfor %}
-{% endif %}
-
-<div class="card shadow-sm">
-
-    <div class="card-body">
-
-        <table class="table table-hover">
-
-            <thead>
-
-                <tr>
-                    <th>Invoice</th>
-                    <th>Vendor</th>
-                    <th>Total</th>
-                    <th>Status</th>
-                    <th>Uploaded</th>
-                    <th>Action</th>
-                </tr>
-
-            </thead>
-
-            
-            <tbody>
-
-{% for invoice in invoices %}
-
-<tr>
-
-    <td>{{ invoice.invoice_number|default:"-" }}</td>
-
-    <td>{{ invoice.vendor|default:"-" }}</td>
-
-    <td>₹ {{ invoice.total }}</td>
-
-    <td>{{ invoice.status }}</td>
-
-    <td>{{ invoice.created_at|date:"d M Y" }}</td>
-
-    <td>
-        <a href="{% url 'invoice_detail' invoice.id %}"
-           class="btn btn-primary btn-sm">
-            View
-        </a>
-    </td>
-
-</tr>
-
-{% empty %}
-
-<tr>
-
-    <td colspan="6" class="text-center">
-
-        No invoices uploaded yet.
-
-    </td>
-
-</tr>
-
-{% endfor %}
-
-</tbody>
-
-        </table>
-
+<div class="page-heading-row">
+    <div>
+        <div class="eyebrow">Document library</div>
+        <h1>Invoice history</h1>
+        <p>Search, review and manage the invoices in your workspace.</p>
     </div>
-
+    <div class="heading-actions"><a href="{% url 'export_csv' %}" class="btn btn-light border rounded-pill px-3"><i class="bi bi-download me-2"></i>Export CSV</a><a href="{% url 'upload_invoice' %}" class="btn btn-dark rounded-pill px-4"><i class="bi bi-plus-lg me-2"></i>Upload invoice</a></div>
 </div>
 
+<section class="surface-card history-card">
+    <div class="history-toolbar">
+        <form method="GET" class="search-box">
+            <i class="bi bi-search"></i>
+            <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Search vendor or invoice number">
+            {% if request.GET.q %}<a href="{% url 'invoice_history' %}" class="clear-search"><i class="bi bi-x"></i></a>{% endif %}
+        </form>
+        <span class="result-count">{{ invoices|length }} result{{ invoices|length|pluralize }}</span>
+    </div>
+    <div class="table-responsive">
+        <table class="app-table">
+            <thead><tr><th>Invoice</th><th>Vendor</th><th>Total</th><th>Status</th><th>Uploaded</th><th></th></tr></thead>
+            <tbody>
+            {% for invoice in invoices %}
+            <tr>
+                <td><div class="invoice-cell"><div class="doc-icon small"><i class="bi bi-file-earmark-text"></i></div><div><strong>{{ invoice.invoice_number|default:"Unidentified" }}</strong><span>{{ invoice.uploaded_file.name|default:"—" }}</span></div></div></td>
+                <td>{{ invoice.vendor|default:"—" }}</td>
+                <td><strong>₹{{ invoice.total|floatformat:2 }}</strong></td>
+                <td><span class="status-badge status-{{ invoice.status|lower }}">{{ invoice.status }}</span></td>
+                <td>{{ invoice.created_at|date:"d M Y" }}</td>
+                <td><a class="btn btn-sm btn-light border rounded-pill px-3" href="{% url 'invoice_detail' invoice.id %}">Review</a></td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6"><div class="empty-state"><div class="empty-icon"><i class="bi bi-folder2-open"></i></div><h3>No invoices found</h3><p>{% if request.GET.q %}Try a different vendor or invoice number.{% else %}Upload your first invoice to populate the history.{% endif %}</p><a href="{% url 'upload_invoice' %}" class="btn btn-dark rounded-pill px-4">Upload invoice</a></div></td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
 {% endblock %}
