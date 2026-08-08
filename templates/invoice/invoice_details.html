@@ -41,6 +41,25 @@
             <div><span>Tax</span><strong>₹{{ invoice.tax|floatformat:2 }}</strong></div>
             <div class="amount-total"><span>Total amount</span><strong>₹{{ invoice.total|floatformat:2 }}</strong></div>
         </div>
+
+        <div class="tally-export-box">
+            <div>
+                <strong><i class="bi bi-box-arrow-down me-2"></i>TallyPrime export</strong>
+                <span>Export the verified invoice in Tally-supported import formats.</span>
+            </div>
+            <div class="tally-export-actions">
+                <a href="{% url 'export_tally_excel' invoice.id %}" class="btn btn-light border rounded-pill px-3">
+                    <i class="bi bi-file-earmark-spreadsheet me-1"></i>Excel
+                </a>
+                <a href="{% url 'export_tally_xml' invoice.id %}" class="btn btn-light border rounded-pill px-3">
+                    <i class="bi bi-filetype-xml me-1"></i>XML
+                </a>
+                <a href="{% url 'export_tally_json' invoice.id %}" class="btn btn-dark rounded-pill px-3">
+                    <i class="bi bi-braces me-1"></i>JSON
+                </a>
+            </div>
+            <small>Verify party/sales ledgers in TallyPrime before importing. The current model exports invoice-level totals; item-wise and separate CGST/SGST/IGST entries require line-item extraction.</small>
+        </div>
     </section>
 </div>
 

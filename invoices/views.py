@@ -11,6 +11,7 @@ import mimetypes
 from django.conf import settings
 
 from .edit_forms import InvoiceEditForm
+from .tally_exports import export_tally_excel, export_tally_xml, export_tally_json
 @login_required(login_url="login")
 def upload_invoice(request):
 
@@ -209,3 +210,20 @@ def delete_invoice(request, invoice_id):
     invoice.delete()
 
     return redirect("invoice_history")
+
+@login_required(login_url="login")
+def export_tally_excel_view(request, invoice_id):
+    invoice = get_object_or_404(Invoice, id=invoice_id, user=request.user)
+    return export_tally_excel(invoice)
+
+
+@login_required(login_url="login")
+def export_tally_xml_view(request, invoice_id):
+    invoice = get_object_or_404(Invoice, id=invoice_id, user=request.user)
+    return export_tally_xml(invoice)
+
+
+@login_required(login_url="login")
+def export_tally_json_view(request, invoice_id):
+    invoice = get_object_or_404(Invoice, id=invoice_id, user=request.user)
+    return export_tally_json(invoice)
